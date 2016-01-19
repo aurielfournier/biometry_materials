@@ -1,0 +1,234 @@
+---
+title: "A quick introduction to R"
+output: html_document
+---
+###Basics
+R is a language and a suite of software for programming and data analysis.
+  
+  - Based on the S language written in the 70's
+  - **_R_** is used interchangeably to refer to the program and the language
+  - Typically users use RStudio as an easier interface
+
+###R Studio
+
+  - Not created by the original writers of R. 
+  - Allows the user to see and explore the variables, including sorting.
+  - Can manage many codes at once
+  - Easily search help files
+  
+###Data Classes
+R has 5 main data types, but there are numerous types available
+These tell R whether 1 means the number 1 (numeric) which we can do math with or the letter representation '1' which has no numeric value
+
+####Numeric
+These are just standard numbers, whether integers or decimals, either one is numeric  
+```{R}
+1
+1.1
+
+
+```
+
+####Integers
+Integers are also numeric, but integers are whole numbers with no decimal. As we can see, the integer of both 1.1 and 1 is 1
+```{R}
+as.integer(1.1)
+as.integer(1)
+```
+####Character
+These are just letters, they have no numeric value associated with them. R reads these as one long 'string'. 
+```{R}
+str( 'Luke Skywalker')
+
+```
+Infact, R sees this phrase not as 2 words 'luke' and 'skywalker' but the string of characters 'luke','(space)','skywalker'. Which is 14 spaces long
+```{R}
+nchar('Luke Skywalker')
+
+```
+####Factor
+Factors are character strings that have some sort of order to them. Like monday, tuesday, and wednesday. In this case the characters are representing objects with some inherit value (an order really 1,2,3 etc...). So say we have the star wars movies
+```{R}
+star_wars<-factor(c('A New Hope', 'Empire Strikes Back', 'Return of the Jedi', 'The Phantom Menace', 'Attack of the Clones', 'Revenge of the Sith'))
+
+levels(star_wars)
+```
+The names do represent something to us, but they don't necessarily have any value. We can, however, give them a value, say we want their order to represent how we personally rank them. We can do this by either giving the object an order vai the levels() function.
+```{R}
+levels(star_wars)<-c('Empire Strikes Back', 'A New Hope', 'Revenge of Sith', 'Return of Jedi', 'The Phantom Menace', 'Attack of Clones')
+
+star_wars
+```
+Or by originally telling it what the levels are
+```{R}
+star_wars<-factor(c('A New Hope', 'Empire Strikes Back', 'Return of the Jedi', 'The Phantom Menace', 'Attack of the Clones', 'Revenge of the Sith'), levels= c('Empire Strikes Back', 'A New Hope', 'Revenge of Sith', 'Return of Jedi', 'The Phantom Menace', 'Attack of Clones'))
+
+levels(star_wars)
+
+```
+
+####Logical
+Logical is just TRUE or FALSE, there's only 2 possible states, yes or no, on and off, which is represented by True or False. R understands this in 3 different ways. Captial letters TRUE and FALSE
+```{R}
+is.logical(TRUE)
+```
+Just the letters T and F
+```{R}
+is.logical(F)
+```
+Or by the numbers 1 or 0. Which R can convert to logical. 
+
+```{R}
+as.logical(c(1,0,1))
+```
+
+###Data Types
+R has 4 main data types
+These are structural types your data can be stored in. They are defined by if they take more than one class type and the dimensions of the data  
+
+####Vectors
+This is a 1 dimensional data set that (only dimension is length) and it can only consist of the same data class. c() creates a vector
+```{R}
+c(1,2,4)
+
+c(1,2,3,4,5,6)
+```
+R attempts to coherse the data into the class it has in common. So if we have two entries 1 and mom, it will coherse them both to characters because 1 can be converted to a character, but mom can not be converted to a number
+```{R}
+
+
+c(1,  'mom')
+str( c(1,  'mom') )
+```
+####Matrices
+This is a 2 dimensional container/array that are all of the same data type
+
+  - essentially a 2 dimensional vector (dimensions are rows and columns)
+```{R}
+matrix_1<-matrix(1:100, nrow=2, ncol=50)
+matrix_1
+```
+We can refer to each of these by their position using brackets [,]. The left position is the row and the right is the column: data[row, column ].   
+They can only be of the same data class
+```{R}
+matrix_1[2, ]
+
+```
+
+####Data.frames
+Data.frames are 2 dimensional array, where each column is the same data class. So we can have multiple data classes in one container. The right side of the equals sign will automatically give the name to the column
+
+```{R}
+dd<-data.frame(id = 1:5, value = c('a','b','c','d','e'))
+dd
+```
+We can also manually define the column names
+```{R}
+colnames(dd)<-c('monkeys','gorillas')
+dd
+```
+You can refer to column names either by their position or by the column name:
+```{R}
+dd$monkeys
+dd[,1]
+```
+
+####Lists
+Lists are containers for the other data types. Can contain any data.type and can be any dimension. You can name lists in the same way as column names in data.frames. They are the storage containers for your data. Think of them like a tackle box / or jewlery box that contain your data with varying sizes and types of items in each bin. At a basic level they're useful for storing data of different types, at a more advanced level you can do all of your data analysis in them using the lapply function.
+```{R}
+list_1<-list(id= 1:4, names=c('1','2'), data_1 = data.frame(id=1:10, rep(c('a','b'),5)))
+list_1
+
+list_1$data_1$id   ###you can refer to items and columns in the same way you would a dataframe, but hierarchically
+
+names(list_1)
+
+str(list_1)
+
+
+```
+#####Arrays
+Arrays are multi-dimensional matrices, all data has to be the same data.class though.
+
+  - A 2 dimensional array is a matrix
+In this following example we are going to make a 2x2x5 dimensiaonl array. Think of this 3d example as an apartment complex with 4 rooms on each level and 5 levels total. We can make arrays as many dimensions as possible.
+```{R}
+data<-array(1:100, dim=c(2,2,5))
+data
+```
+###Function interface
+One of the goals of the writers of the S language was to make it easy to go from idea, to implementation of analysis or creation of software
+
+  - basically all operations in R are written as functions
+```{R}
+head(mtcars)
+
+
+###Subset is really just a function thats essentially subsetting like you would 
+subset(mtcars, mpg>30)
+mtcars[mtcars$mpg>30,]
+#These are equivalent
+
+
+###in this example we can see calling a function shows us that R is hiding all the code behind the scenes. 
+data.frame
+
+
+```
+
+But we can actually do this as well!
+
+
+Say we want to write a function to calculate Standard Error
+Tip: Remember the object names inside 'function()' is the **variable** r stores your input as. So whatever vector we give to our new function, R will store that vector as 'data'. We then proceed under the assumption that our vector is now called 'data'
+```{R}
+#SD/sqrt(n)
+
+SEM<-function(data){
+  
+  sd(data)/length(data)
+  
+  
+}
+
+SEM(data=1:10000)
+
+```
+Now no matter what numerical vector we put into SEM(), it will give us the standard error. It does this by finding the standard error, and then infering the 'n' by calculating the length of the vector (which are essentially the same thing!)
+
+##Good places to go from here
+**Baby steps**
+For some who is just starting out and who is new to statistical software in general  
+[SWIRL!](http://swirlstats.com/students.html)
+
+
+
+**Serious steps**
+If you want to tackle learning R in a more ambitious or complete manner, I suggest taking the coursera course, which is free and runs essentially every month. [Coursera](
+https://www.coursera.org/courses/rprog)  
+
+
+And then move onto: [Advanced R](http://adv-r.had.co.nz/)
+
+This advanced course, is really just an html version of Hadley Wickhams advanced R book. It's written using Markdown, and by the end of it should give you a fluent grasp on R
+
+
+******
+
+####Interesting Packages
+Rwars gives you access to all star wars knowledge you ever needed 
+```{R}
+library(devtools)
+install_github("ironholds/rwars", ref = "0.5.0")
+library(rwars)
+
+head(get_film(2))
+
+get_person(1)
+
+get_planet(4)
+
+movies<-lapply(1:6, function(x) get_film(x)$title)
+data.frame(id=1:6, title=unlist(movies))
+```
+
