@@ -200,7 +200,7 @@ data1 <- data[ ,1:3]    #a data frame called data1
 grouping <- data[ ,4:5]  #and our grouping variables called grouping
 
 # tapply runs a function on a vector based on a set of groupings we feed it
-tapply(data1$wingchord, grouping$genera, mean)  
+tapply(data$wingchord, data$genera, mean)  
 
 data  
 
@@ -208,7 +208,7 @@ data
 
 # by runs a function on a DATAFRAME based on a vector of groupings
 
-by(data1, grouping$genera, data.frame)
+by(data, data$genera, data.frame)
 
 # the key here is that it splits the entire dataframe into seperate dataframes based on our groupings. AND THEN runs a function on the dataframe itself. 
 
@@ -222,7 +222,7 @@ by(data1, grouping$genera, summary)
 
 # aggregate takes a data frame and splits it into as many groups as we want, and then runs a function DOWN the columns
 
-aggregate(data1, by = list(grouping$genera, grouping$migratory), mean)    # so the by= has to be a list, so just get used to typing by = list( all my groups)
+aggregate(data, by = list(data$genera, data$migratory), mean)    # so the by= has to be a list, so just get used to typing by = list( all my groups)
 data1
 grouping
 

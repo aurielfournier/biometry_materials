@@ -2,6 +2,9 @@
 title: "A quick introduction to R"
 output: html_document
 ---
+
+Originally written by Matt Boone, modified by Auriel Fournier 
+
 ###Basics
 R is a language and a suite of software for programming and data analysis.
   
@@ -16,11 +19,11 @@ R is a language and a suite of software for programming and data analysis.
   - Can manage many codes at once
   - Easily search help files
   
-###Data Classes
+##Data Classes
 R has 5 main data types, but there are numerous types available
 These tell R whether 1 means the number 1 (numeric) which we can do math with or the letter representation '1' which has no numeric value
 
-####Numeric
+###Numeric
 These are just standard numbers, whether integers or decimals, either one is numeric  
 ```{R}
 1
@@ -29,13 +32,13 @@ These are just standard numbers, whether integers or decimals, either one is num
 
 ```
 
-####Integers
+###Integers
 Integers are also numeric, but integers are whole numbers with no decimal. As we can see, the integer of both 1.1 and 1 is 1
 ```{R}
 as.integer(1.1)
 as.integer(1)
 ```
-####Character
+###Character
 These are just letters, they have no numeric value associated with them. R reads these as one long 'string'. 
 ```{R}
 str( 'Luke Skywalker')
@@ -46,7 +49,7 @@ Infact, R sees this phrase not as 2 words 'luke' and 'skywalker' but the string 
 nchar('Luke Skywalker')
 
 ```
-####Factor
+###Factor
 Factors are character strings that have some sort of order to them. Like monday, tuesday, and wednesday. In this case the characters are representing objects with some inherit value (an order really 1,2,3 etc...). So say we have the star wars movies
 ```{R}
 star_wars<-factor(c('A New Hope', 'Empire Strikes Back', 'Return of the Jedi', 'The Phantom Menace', 'Attack of the Clones', 'Revenge of the Sith','The Force Awakens'))
@@ -66,7 +69,7 @@ star_wars<-factor(c('A New Hope', 'Empire Strikes Back', 'Return of the Jedi', '
 levels(star_wars)
 ```
 
-####Logical
+###Logical
 Logical is just TRUE or FALSE, there's only 2 possible states, yes or no, on and off, which is represented by True or False. R understands this in 3 different ways. Captial letters TRUE and FALSE
 ```{R}
 is.logical(TRUE)
@@ -81,11 +84,11 @@ Or by the numbers 1 or 0. Which R can convert to logical.
 as.logical(c(1,0,1))
 ```
 
-###Data Types
+##Data Types
 R has 4 main data types
 These are structural types your data can be stored in. They are defined by if they take more than one class type and the dimensions of the data  
 
-####Vectors
+###Vectors
 This is a 1 dimensional data set that (only dimension is length) and it can only consist of the same data class. c() creates a vector
 ```{R}
 c(1,2,4)
@@ -99,7 +102,7 @@ R attempts to coherse the data into the class it has in common. So if we have tw
 c(1,  'mom')
 str( c(1,  'mom') )
 ```
-####Matrices
+###Matrices
 This is a 2 dimensional container/array that are all of the same data type
 
   - essentially a 2 dimensional vector (dimensions are rows and columns)
@@ -114,7 +117,7 @@ matrix_1[2, ]
 
 ```
 
-####Data.frames
+###Data.frames
 Data.frames are 2 dimensional array, where each column is the same data class. So we can have multiple data classes in one container. The right side of the equals sign will automatically give the name to the column
 
 ```{R}
@@ -132,7 +135,7 @@ dd$monkeys
 dd[,1]
 ```
 
-####Lists
+###Lists
 Lists are containers for the other data types. Can contain any data.type and can be any dimension. You can name lists in the same way as column names in data.frames. They are the storage containers for your data. Think of them like a tackle box / or jewlery box that contain your data with varying sizes and types of items in each bin. At a basic level they're useful for storing data of different types, at a more advanced level you can do all of your data analysis in them using the lapply function.
 ```{R}
 list_1<-list(id= 1:4, names=c('1','2'), data_1 = data.frame(id=1:10, rep(c('a','b'),5)))
@@ -146,7 +149,7 @@ str(list_1)
 
 
 ```
-#####Arrays
+####Arrays
 Arrays are multi-dimensional matrices, all data has to be the same data.class though.
 
   - A 2 dimensional array is a matrix
@@ -155,7 +158,7 @@ In this following example we are going to make a 2x2x5 dimensiaonl array. Think 
 data<-array(1:100, dim=c(2,2,5))
 data
 ```
-###Function interface
+##Function interface
 One of the goals of the writers of the S language was to make it easy to go from idea, to implementation of analysis or creation of software
 
   - basically all operations in R are written as functions
@@ -167,13 +170,29 @@ head(mtcars)
 subset(mtcars, mpg>30)
 mtcars[mtcars$mpg>30,]
 #These are equivalent
-
-
-###in this example we can see calling a function shows us that R is hiding all the code behind the scenes. 
-data.frame
-
-
 ```
+
+in this example we can see calling a function shows us that R is hiding all the code behind the scenes. 
+
+```{r}
+#  ordinal_date_con
+# function (x) 
+# {
+#     x <- apply(x, 2, as.numeric)
+#     x <- matrix(x, ncol = 3)
+#     varmonth <- cbind(c(1:12), c(0, 31, 59, 90, 120, 151, 181, 
+#         212, 243, 273, 304, 334))
+#     juldates <- data.frame(odate = as.numeric())
+#     for (i in 1:nrow(x)) {
+#         juldates[i, 1] <- varmonth[which(x[i, 1] == varmonth[, 
+#             1]), 2] + x[i, 2]
+#     }
+#     juldates$odate
+# }
+```
+
+
+
 
 But we can actually do this as well!
 
@@ -195,13 +214,10 @@ SEM(data=1:10000)
 ```
 Now no matter what numerical vector we put into SEM(), it will give us the standard error. It does this by finding the standard error, and then infering the 'n' by calculating the length of the vector (which are essentially the same thing!)
 
-##Good places to go from here
-**Baby steps**
-For some who is just starting out and who is new to statistical software in general  
-[SWIRL!](http://swirlstats.com/students.html)
+
 
 ```{r}
-
+library(gapminder)
 datag<-gapminder
 
 head(datag)   
@@ -244,7 +260,7 @@ this %in% that
 
 
 ```{r}
-data <- read.csv('./Biometry_Materials/rail_data.csv')
+data <- read.csv('./lab_1_intro_to_r/rail_data.csv')
 data
 
 # lets subset our data into two dataframes for ease in this example. 
@@ -295,7 +311,7 @@ paste0(name,1:10)
 ```{r}
 
 
-
+data <- matrix(runif(100,0,1),nrow=10)
 
 # multiplying vectors and matrices
 
@@ -318,7 +334,7 @@ lt<-as.POSIXlt(Sys.time(),format='%Y-%m-%d %H%M%D')
 ```
 
 ```{r}
-
+library(dplyr)
 # pipes can be used to write code which is more readable by people
 
 head(data)
@@ -333,11 +349,10 @@ data %>% summary
 
 ```
 
-# Tutorials
-
-# check out the swirl package
-http://swirlstats.com/students.html
-
+##Good places to go from here
+**Baby steps**
+For some who is just starting out and who is new to statistical software in general  
+[SWIRL!](http://swirlstats.com/students.html)
 
 If you want to tackle learning R in a more ambitious or complete manner, I suggest taking the coursera course, which is free and runs essentially every month. [Coursera](
 https://www.coursera.org/courses/rprog)  
