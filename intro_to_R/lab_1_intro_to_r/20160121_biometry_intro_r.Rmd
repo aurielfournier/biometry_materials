@@ -260,7 +260,7 @@ this %in% that
 
 
 ```{r}
-data <- read.csv('./lab_1_intro_to_r/rail_data.csv')
+data <- read.csv('./20160121_biometry_rail_data.csv')
 data
 
 # lets subset our data into two dataframes for ease in this example. 
