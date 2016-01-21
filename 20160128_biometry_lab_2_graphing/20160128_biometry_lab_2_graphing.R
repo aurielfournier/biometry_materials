@@ -96,3 +96,16 @@ ggplot()+stat_qq(data=thousand, aes(sample=a))+theme_bw()
 ggplot()+stat_qq(data=exp, aes(sample=a))+theme_bw()
 ggplot()+stat_qq(data=unif, aes(sample=a))+theme_bw()
 ggplot()+stat_qq(data=radish, aes(sample=RAD_GROW, group=TREAT, color=TREAT))+theme_bw()
+
+
+
+
+# Questions
+# Using the file presnork.csv answer the following questions.
+# Are the sizes of trout normally distributed?  Are there differences between the size distributions of brook trout (sp 1) and rainbow trout (sp 2)?  What are the mean sizes for brook trout and rainbow trout?  Could you make an estimate of ages from this data and what type of plot would you use to do so?  
+
+
+
+
+# Using the file tottrhab.csv answer the following questions.
+# How are the focal velocities (focvel) of brook trout and rainbow trout distributed?  Does a box plot show differences between these species?  Are there "outside values"?  How should you deal with "outside values"?  What is the third quartile for rainbow trout?
