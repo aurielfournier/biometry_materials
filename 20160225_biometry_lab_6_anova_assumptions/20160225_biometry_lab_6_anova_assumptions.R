@@ -3,15 +3,18 @@
 # Anova Assumptions and Transformations
 
 
-
-
 dat <- read.csv("./20160225_biometry_lab_6_anova_assumptions/medley.csv")
 
 model <- aov(data=dat, DIVERSTY ~ ZINC)
 modeltable <- summary(model)
-plot(model)
+plot(model) # this function can be seen as a bit odd since you have to kpt return a few times to see all the plots
 
+# how to pull out the residuals
 resid <- model$residuals
+
+###
+# Excercise
+###
 
 # Are observations normally distributed, independent, with homogeneity of variance? 
 # Include graphs with your answers.  
@@ -29,9 +32,9 @@ resid <- model$residuals
 # Do they look skewed?  
 
 
-
-
-
+###
+# time to simulate a BUNCH OF DATA
+###
 
 uniforms <- data.frame(a=rep(0,30))
 
@@ -48,7 +51,6 @@ ubar <- mean(uniforms[,"a"])
 ss1 <- ((10)*(ubar1-ubar)^2)
 ss2 <- ((10)*(ubar2-ubar)^2)
 ss3 <- ((10)*(ubar3-ubar)^2)
-
 
 ssbetween <- sum(ss1, ss2, ss3)
 msbetween <- ssbetween/2

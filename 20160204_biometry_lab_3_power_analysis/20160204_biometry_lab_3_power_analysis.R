@@ -7,7 +7,8 @@
 trout <- read.csv("./20160204_biometry_lab_3_power_analysis/trout.csv")
 beetle <- read.csv("./20160204_biometry_lab_3_power_analysis/beetle.csv")
 crayfish <- read.csv("./20160204_biometry_lab_3_power_analysis/crayfish.csv")
-# 
+
+
 # Please answer the questions, pasting in appropriate tables and figures.   Also
 # turn in the associated Excel files with your calculations.
 # 
@@ -39,7 +40,7 @@ crayfish <- read.csv("./20160204_biometry_lab_3_power_analysis/crayfish.csv")
 # Data is mass in grams.
 
 
-power.t.test(n=10, delta= mean(trout$C_growth-trout$E_growth), sd=sd(c(trout$C_growth,trout$E_growth)), sig.level = 0.05)
+(pttest <- power.t.test(n=10, delta= mean(trout$C_growth-trout$E_growth), sd=sd(c(trout$C_growth,trout$E_growth)), sig.level = 0.05))
 
 
 ###
@@ -52,7 +53,7 @@ power.t.test(n=10, delta= mean(trout$C_growth-trout$E_growth), sd=sd(c(trout$C_g
 # determine an appropriate sample size for this study.
 
 
-power.prop.test(n=(beetle$Bright_Red+beetle$Not_BR), p1=beetle$Bright_Red,p2=beetle$Not_BR, sig.level=0.05)
+(pprop <- power.prop.test(n=(beetle$Bright_Red+beetle$Not_BR), p1=beetle$Bright_Red,p2=beetle$Not_BR, sig.level=0.05))
 
 
 
@@ -79,23 +80,23 @@ power.prop.test(n=(beetle$Bright_Red+beetle$Not_BR), p1=beetle$Bright_Red,p2=bee
 
 # first we only want Meekie
 
-meeki <- crayfish[crayfish$Species=="O. meeki",]
+meeki <- crayfish[crayfish$Species=="O. meeki",] # remember we put this on the left side of the comma because we want all the rows where this is true. and we use double equals signs
 
 # number of groups
-length(unique(meeki$Year))
+length(unique(meeki$Year)) # this will give us the number of unique levels of meeki$Year
 
 #how many in each group
-table(meeki$Year)
+table(meeki$Year) # this gives us a count of how many fall into each category
 
 # between.var 
-var(meeki$Total)
-
+var(meeki$Total) # var is the variance function in R
+ 
 #within group variance
 
-var5 <- var(meeki[meeki$Year==2005,]$Total)
+var5 <- var(meeki[meeki$Year==2005,]$Total) # so we are selecting only the Year 2005, and then at the end we are tacking on the $Total argument, so we are taking just the Total column where year == 2005
 var6 <- var(meeki[meeki$Year==2006,]$Total)
 var7 <- var(meeki[meeki$Year==2007,]$Total)
 
 max(var5, var6, var7)
 
-power.anova.test(groups=3, n=10, between.var=var(meeki$Total), within.var=max(var5, var6, var7), sig.level=0.05 )
+(panova <- power.anova.test(groups=3, n=10, between.var=var(meeki$Total), within.var=max(var5, var6, var7), sig.level=0.05 ))

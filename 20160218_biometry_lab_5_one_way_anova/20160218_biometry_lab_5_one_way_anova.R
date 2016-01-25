@@ -2,7 +2,6 @@
 # Lab 4
 # One Way ANOVA
 
-# Packages You Need
 
 dat <- read.csv("./20160218_biometry_lab_5_one_way_anova/microhabitat.csv")
 
@@ -17,14 +16,20 @@ summary(dat)
 str(dat)
 head(dat)
 
+# so for an anova you use the aov() function. you use the data= argument to give it the obeject where your data is
+# then you put your response on the left side and your predictor on the right side of the tilda (~) (above the tab key)
 model <- aov(data=dat, VELOCITY ~ SITE)
-modeltable <- summary(model)
+modeltable <- summary(model) # you can also do anova(model) but summary gives you the same information and summary() can be used on other model types
+
+###
+# Excecise
+###
 
 # Can you read and interpret the ANOVA table?
 # Could you explain it to me?
 # Are there significant differences among SITES?
 
-# Which SITES are differnt from each other?
+# Which SITES are different from each other?
 # How would yuou go about answering this question?
 # Again could you explain to me?
 # What is the difference between experiment-wise error and pairwise error?
@@ -38,7 +43,7 @@ modeltable <- summary(model)
 # Does the data mean the assumptions of the test?
 # Why, or why not?
 # Once you've done all that you know the data are not normally distributed for Velocity, so let's try a non-parametric test that is equivelent to the ANOVA?
-# What teset would yo uuse? 
+# What test would you use? 
 # Are there any assumptions?
 # Does your data meet the assumptions?
 # Try to get your data to meet the assumptions then do the test.
