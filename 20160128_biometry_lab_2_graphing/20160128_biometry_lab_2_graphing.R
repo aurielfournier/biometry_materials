@@ -142,6 +142,16 @@ unif <- data.frame(a=runif(1000,0,1))
 grid.arrange(a,b,c,d,e, ncol=1)
 grid.arrange(a,b,c,d,e, nrow=1)
 
+# if you are saving a single ggplot graph you can use ggsave() to save it outside of R
+# you can define the height and width and dpi which is very useful for publications
+ggsave(a, file="./20160128_biometry_lab_2_graphing/graph_a.png", width=5, height=5, units="cm", dpi=300)
+
+# if you are trying to save a panel of graphs such as in grid.arrange you will need to use this method
+# in png the dpi is res (for resolutino)
+png(file="./20160128_biometry_lab_2_graphing/grid_arrange_graph.png", units="cm", width=10, height=18, res=300)
+grid.arrange(a,b,c,d,e,ncol=1)
+dev.off()
+
 #
 #
 #
@@ -189,6 +199,10 @@ ggplot()+
   theme_bw()
 
 
+
+# for more details on ggplot graphing and how to customize things
+# https://github.com/aurielfournier/AOU_workshop/blob/master/AOUworkshop_4_GGPLOT.R
+# https://github.com/jennybc/ggplot2-tutorial
 
 
 # Questions
