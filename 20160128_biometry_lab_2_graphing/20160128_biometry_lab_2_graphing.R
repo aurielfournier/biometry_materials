@@ -7,6 +7,8 @@
 library(ggplot2) # graphing package
 library(dplyr) # this package is very powerful for summarizing and manipulating data
 library(gridExtra) # works with ggplot to create grids of graphs
+library(ggthemes) # gives you additional ggplot themes
+library(RColorBrewer) # this gives you custom color ramps, including color blind friendly stuff
 
 radish <- read.csv("./20160128_biometry_lab_2_graphing/RAD_GROW.csv")
 
@@ -199,6 +201,185 @@ ggplot()+
   theme_bw()
 
 
+###################################
+## THEMES ##
+###################################
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here")
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + 
+  theme_bw()
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + 
+  theme_calc()
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + 
+  theme_economist()
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + 
+  theme_economist_white()
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + 
+  theme_few()
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + 
+  theme_gdocs()
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + 
+  theme_wsj()
+
+###############################
+# BUT YOU CAN DO IT YOURSELF
+# OF COURSE
+###############################
+
+# these is where ggplot can become really really exhausting
+# ALMOST anything you want to do, can be done
+
+# things I know cannot be done
+###############################################
+# you cannot have two different y axis
+
+## so you can add things onto a default theme, to make it better/what you want
+## here we can remove the gridlines from theme_bw
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here")+
+  theme_bw()+
+  theme(panel.grid=element_blank())
+
+
+## Custom theme functions
+
+
+theme_krementz <- function(){
+  theme(axis.text.x = element_text(size=12,color="black"),
+        axis.text.y = element_text(size=12,color="black"),
+        axis.title.y=element_text(size=20),
+        plot.background = element_blank(),
+        panel.border=element_blank(),
+        panel.grid.major= element_line(colour=NA), 
+        panel.grid.minor=element_line(colour=NA),
+        title=element_text(size=20),
+        panel.background = element_rect(fill = "white"),
+        axis.line=element_line(colour="black"),
+        strip.background=element_rect(fill="white", color="black"),
+        strip.text=element_text(size=15))
+}
+
+
+ggplot()+
+  geom_boxplot(data=radish, aes(x=TREAT, y=RAD_GROW))+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here")+
+  theme_krementz()
+
+radish$time <- c(rep(seq(1:(nrow(radish)/2)))) #lets pretend that there is a time variable here so we can make a line graph
+
+# graph with interior legend
+ggplot()+
+  geom_line(data=radish, aes(x=time, y=RAD_GROW, group=TREAT, color=TREAT))+
+  ggtitle("Radish growth over time")+
+  ylab("Radish growth (cm)")+
+  xlab("time")+
+  theme_krementz()+ # so this uses the custom theme we already built
+  theme(legend.background = element_rect(fill = "white"), # this makes the background of the legend white
+        legend.position = c(.15,.75), # this tells ggplot where to put the legend in exact coordinates
+        legend.direction = "vertical" # this tells ggplot what direction to make the list
+  )+
+  scale_color_discrete(name="Treatments") 
+
+
+ggplot()+
+  geom_line(data=radish, aes(x=time, y=RAD_GROW, group=TREAT, color=TREAT))+
+  ggtitle("Radish growth over time")+
+  ylab("Radish growth (cm)")+
+  xlab("time")+
+  theme_krementz()+ # so this uses the custom theme we already built
+  theme(legend.background = element_rect(fill = "white"), # this makes the background of the legend white
+        legend.position = "top", # this tells ggplot where to put the legend 
+        legend.direction = "horizontal" # this tells ggplot what direction to make the list
+  )+
+  scale_color_discrete(name="Treatments") # this titles the legend the "\n" is a line break
+
+
+######################
+# Colors (RColorBrewer)
+#####################
+#http://colorbrewer2.org/
+
+display.brewer.all(n=NULL, type="all", select=NULL, exact.n=TRUE,colorblindFriendly=TRUE)
+
+# explain WHAT this is doing
+mypalette<-brewer.pal(5,"Greens")
+
+ggplot(gdat, aes(x=continent, y=lifeexp, fill=continent)) + 
+  geom_boxplot()+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + scale_fill_manual(values=mypalette)
+
+mypalette<-brewer.pal(5,"Set2")
+
+ggplot(gdat, aes(x=continent, y=lifeexp, fill=continent)) + 
+  geom_boxplot()+ 
+  ggtitle("TITLE HERE")+ 
+  xlab("text here")+ 
+  ylab("text here") + scale_fill_manual(values=mypalette)
+
+# mention that you can come up with your own vectores of hexidecimal or 'word' colors
+
+# put in explanation of how to store graphs as objects
+
+# you can always add onto the aesthetics later by adding an additional aes command. 
+ggplot(gdat, aes(x=gdppercap, y=lifeexp))+
+  scale_x_log10()+ 
+  aes(color=continent)+
+  geom_point()+
+  geom_smooth(lwd=3, se=F)
+
+
+
+##########################################################################################
 
 # for more details on ggplot graphing and how to customize things
 # https://github.com/aurielfournier/AOU_workshop/blob/master/AOUworkshop_4_GGPLOT.R
