@@ -2,6 +2,13 @@
 title: "A quick introduction to R"
 output: html_document
 ---
+```{r}
+
+library(dplyr)
+library(gapminder)
+#install.packages("dplyr")
+
+```
 
 Originally written by Matt Boone, modified by Auriel Fournier 
 
@@ -126,13 +133,15 @@ dd
 ```
 We can also manually define the column names
 ```{R}
-colnames(dd)<-c('monkeys','gorillas')
+colnames(dd) <- c('monkeys','gorillas')
 dd
 ```
 You can refer to column names either by their position or by the column name:
 ```{R}
 dd$monkeys
+
 dd[,1]
+
 ```
 
 ###Lists
@@ -230,7 +239,7 @@ datag$year==1987    ##shows us what rows year equals 1987
 datag[datag$year==1987, ]   
 
 
-datag[datag$continent=='Europe' | datag$continent=='Asia' & datag$year==1987, ]
+datag[(datag$continent=='Europe' | datag$continent=='Asia') & datag$year==1987, ]
 
 
 
@@ -249,11 +258,9 @@ datag[datag$continent=='Europe' | datag$continent=='Asia' & datag$year==1987, ]
 # %in%   #the original match() function was rewritten to %in%
 
 # find all the variables in 'this' that are also in 'that'
-this<-c(1:10)
-that<-c(1,2)
+con <- c("Asia","Europe")
 
-this %in% that  
-
+datag[!(datag$continent %in% con),]
 
 ```
 
@@ -263,9 +270,7 @@ this %in% that
 data <- read.csv('./20160121_biometry_rail_data.csv')
 data
 
-# lets subset our data into two dataframes for ease in this example. 
-data1 <- data[ ,1:3]    #a data frame called data1
-grouping <- data[ ,4:5]  #and our grouping variables called grouping
+
 
 # tapply runs a function on a vector based on a set of groupings we feed it
 tapply(data$wingchord, data$genera, mean)  
@@ -300,7 +305,7 @@ paste0(name,'_',version,' was not found, please try ', version-1 )  # notice we 
 
 #its also useful to add numbers to the end, it will also recycle as necessary
 
-paste0(name,1:10) 
+paste0(name," ",1:10) 
 
 
 
@@ -315,7 +320,7 @@ data <- matrix(runif(100,0,1),nrow=10)
 
 # multiplying vectors and matrices
 
-data*1:10       # 'pseudo' matrix multiplication. Runs 1:10 on each column.
+data * 1:10       # 'pseudo' matrix multiplication. Runs 1:10 on each column.
 
 data %*% 1:10   # matrix multiplication. This is how you do real matrix multiplication 
 
@@ -328,9 +333,6 @@ Sys.time()
 dt<-as.Date(Sys.time(),format='%Y-%m-%d')
 ct<-as.POSIXct(Sys.time(),format='%Y-%m-%d %H%M%D')
 lt<-as.POSIXlt(Sys.time(),format='%Y-%m-%d %H%M%D')
-
-
-
 ```
 
 ```{r}
