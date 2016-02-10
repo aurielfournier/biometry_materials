@@ -7,8 +7,7 @@ Lab 2 - Graphing & DPLYR
 
 Lab 3 - Power Analysis
 
-
-Lab 4 - Graphical Analysis & Transformations (NOT DONE YET)
+Lab 4 - CANCELLED
 
 Lab 5 - One-Way ANOVA
 
