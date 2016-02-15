@@ -1,7 +1,11 @@
 # Biometry 2016 
-# Lab 4
+# Lab 5
 # One Way ANOVA
 
+
+# packages you will need
+library(ggplot2)
+library(ggthemes)
 
 dat <- read.csv("./20160218_biometry_lab_5_one_way_anova/microhabitat.csv")
 
@@ -16,13 +20,37 @@ summary(dat)
 str(dat)
 head(dat)
 
-# so for an anova you use the aov() function. you use the data= argument to give it the obeject where your data is
-# then you put your response on the left side and your predictor on the right side of the tilda (~) (above the tab key)
+# check the assumptions
+
+# normality
+ggplot()+
+  geom_boxplot(data=dat, aes(y=VELOCITY, x=1))+
+  theme_few()+
+  coord_flip()
+
+ggplot()+
+  geom_histogram(data=dat, aes(x=VELOCITY))+
+  theme_few()
+
+# homogeneity of variance
+ggplot()+geom_boxplot(data=dat, aes(x=SITE, y=VELOCITY))+theme_few()
+
+# independence
+
+
+
+### To perform an ANOVA you use the aov() function.
+
+# You use the data= argument to give it the data object (in this example, dat)
+# then you put your response on the left side and your predictor on the right side of the tilda (~) (found above above the tab key)
 model <- aov(data=dat, VELOCITY ~ SITE)
-modeltable <- summary(model) # you can also do anova(model) but summary gives you the same information and summary() can be used on other model types
+# you can also do anova(model) but summary gives you the same information and summary() can be used on other model types
+(modeltable <- summary(model)) # by putting the entire function and output in parentheses it will save the modeltable to 'modeltable' and also print it to the console
+
+
 
 ###
-# Excecise
+# Excercise
 ###
 
 # Can you read and interpret the ANOVA table?
@@ -30,7 +58,7 @@ modeltable <- summary(model) # you can also do anova(model) but summary gives yo
 # Are there significant differences among SITES?
 
 # Which SITES are different from each other?
-# How would yuou go about answering this question?
+# How would you go about answering this question?
 # Again could you explain to me?
 # What is the difference between experiment-wise error and pairwise error?
 # Have you controlled the experiment-wise error level?
