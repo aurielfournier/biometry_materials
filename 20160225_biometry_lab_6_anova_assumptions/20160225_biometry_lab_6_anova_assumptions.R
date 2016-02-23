@@ -1,45 +1,56 @@
 # Biometry 2016 
 # Lab 6
 # Anova Assumptions and Transformations
-
+library(ggplot2)
+library(ggthemes)
+install.packages('ggfortify')
+library(ggfortify) # new package!!
 
 dat <- read.csv("./20160225_biometry_lab_6_anova_assumptions/medley.csv")
 
-model <- aov(data=dat, DIVERSTY ~ ZINC)
+model <- aov(data=dat, DIVERSITY ~ ZINC)
 modeltable <- summary(model)
-plot(model) # this function can be seen as a bit odd since you have to kpt return a few times to see all the plots
 
-# how to pull out the residuals
-resid <- model$residuals
+# After you run the ANOVA, check the residuals.  
+resid <- model$residuals # this is how you pull out the residuals, if you want to
+
+autoplot(model, which = 1:6, ncol = 3, label.size = 3)+theme_few() # this comes from the ggfortify function which makes doing post model graphs for examination very simple. 
+# Do they look skewed?  
 
 ###
 # Excercise
 ###
 
 # Are observations normally distributed, independent, with homogeneity of variance? 
-# Include graphs with your answers.  
+## look back at last weeks scripts to refresh your memory
+
 # Do you need to transform the data? 
+
+## ways to do different transformations in R
 
 # square root transformation sqrt()
 # natural log log()
 # base-10 log log10()
 # exponential exp()
 # sin sin()
+# rails ot the second power variable^2
 # raise to the third power variable^3
 
-# After you run the ANOVA, check the residuals.  
-# (Hint, save the residuals as a data file).  
-# Do they look skewed?  
+
+
+
+
+
 
 
 ###
 # time to simulate a BUNCH OF DATA
 ###
 
-uniforms <- data.frame(a=rep(0,30))
+uniforms <- data.frame(a=rep(0,30)) # rep() repeats the first argument as many time as the second argument rep(0,30) repeats 0 30x
 
 for(i in 1:30){
-  uniforms[i,"a"] <- rnorm(1,1,3)
+  uniforms[i,"a"] <- rnorm(1,1,3) # rnorm generates a random number from a normal distribution for more info check out ?rnorm
 }
 
 ubar1 <- mean(uniforms[1:10,])
