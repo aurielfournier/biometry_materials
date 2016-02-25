@@ -15,7 +15,21 @@ modeltable <- summary(model)
 resid <- model$residuals # this is how you pull out the residuals, if you want to
 
 autoplot(model, which = 1:6, ncol = 3, label.size = 3)+theme_few() # this comes from the ggfortify function which makes doing post model graphs for examination very simple. 
+
+
 # Do they look skewed?  
+
+
+
+TukeyHSD(model, "ZINC", ordered=FALSE, conf.level=0.95)
+
+kruskal.test(dat$DIVERSITY, dat$ZINC)
+
+library(lawstat) # need these for levene.test
+
+levene.test(dat$DIVERSITY, dat$ZINC, location="median")
+
+
 
 ###
 # Excercise
@@ -35,9 +49,6 @@ autoplot(model, which = 1:6, ncol = 3, label.size = 3)+theme_few() # this comes 
 # sin sin()
 # rails ot the second power variable^2
 # raise to the third power variable^3
-
-
-
 
 
 
