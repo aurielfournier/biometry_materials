@@ -58,34 +58,39 @@ levene.test(dat$DIVERSITY, dat$ZINC, location="median")
 # time to simulate a BUNCH OF DATA
 ###
 
-uniforms <- data.frame(a=rep(0,30)) # rep() repeats the first argument as many time as the second argument rep(0,30) repeats 0 30x
+sims <- 1000
+
+uniforms <- as.data.frame(matrix(NA,ncol=sims,nrow=30)) # rep() repeats the first argument as many time as the second argument rep(0,30) repeats 0 30x
 
 for(i in 1:30){
-  uniforms[i,"a"] <- rnorm(1,1,3) # rnorm generates a random number from a normal distribution for more info check out ?rnorm
-}
+  for(j in 1:sims){
+  uniforms[i,j] <- rnorm(1,1,3) # rnorm generates a random number from a normal distribution for more info check out ?rnorm
+}}
 
-ubar1 <- mean(uniforms[1:10,])
-ubar2 <- mean(uniforms[11:20,])
-ubar3 <- mean(uniforms[21:30,])
+ubar1 <- colMeans(uniforms[1:10,])
+ubar2 <- colMeans(uniforms[11:20,])
+ubar3 <- colMeans(uniforms[21:30,])
 
-ubar <- mean(uniforms[,"a"])
+ubar <- colMeans(uniforms)
 
 ss1 <- ((10)*(ubar1-ubar)^2)
 ss2 <- ((10)*(ubar2-ubar)^2)
 ss3 <- ((10)*(ubar3-ubar)^2)
 
-ssbetween <- sum(ss1, ss2, ss3)
+ssbetween <- colSums(rbind(ss1, ss2, ss3))
 msbetween <- ssbetween/2
 
-uniforms$y <- NA
+y <- matrix(NA, nrow=30, ncol=sims)
 
-for(i in 1:30){
-  uniforms[i,"y"] <- (uniforms[i,"a"]-ubar)^2
+for(j in 1:sims){
+  y[,j] <- (uniforms[,j]-ubar[j])^2
 }
 
-sstotal <- sum(uniforms[,"y"])
+sstotal <- colSums(y)
 ssresidual <- sstotal - ssbetween
 msresidual <- ssresidual/27
 f <- msbetween/msresidual
 fcrit <- qf(0.95, 1, 27)
 signif <- f>fcrit
+
+length(which(signif)) # the number of TRUE
