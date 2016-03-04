@@ -26,7 +26,13 @@ model88 <- aov(data=q88, EGGS ~ DENSITY * SEASON)
 # Was there interaction?  
 # Can you say anything about the main effects?
 
+## Interaction plot
 
+ggplot(q88, aes(x = factor(SEASON), y = EGGS)) + 
+  geom_boxplot() + 
+  geom_point(data = toothInt, aes(y = val)) +
+  geom_line(data = toothInt, aes(y = val, group = supp)) + 
+  theme_bw()
 
 # Use "quin_1_two_way.csv".  Run a two-way ANOVA with DENSITY and SEASON as the predictor variables and EGGS as the response variable.  
 
