@@ -41,27 +41,52 @@ ggplot()+geom_boxplot(data=ben, aes(x=as.factor(BLOCK), y=final_invert, fill=TRE
 
 # homogeneity of variance/covariance
 
-bengather <-  ben[,c("TREAT","BLOCK","final_invert")] %>% # splits out the columns we want
+bencov <-  ben[,c("TREAT","BLOCK","final_invert")] %>% # splits out the columns we want
   gather("final_invert","value",-TREAT,-BLOCK) %>% # arranges them in long form
   group_by(BLOCK,TREAT) %>% # selects the groups we are interested in
   summarize(median=median(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
-  spread("BLOCK","median")  #arranges them so taht the treatments are the columns and the data.frame is filled with the median column values, so then the blocks are the rows
+  spread("TREAT","median")  #arranges them so taht the treatments are the columns and the data.frame is filled with the median column values, so then the blocks are the rows
 
 # Compound Symmetry Assumption
 
-cov(bengather[,2:9])
+cov(bencov[,2:4]) 
+
+# so this is a symetrical matrix which means the values on either side of the upper left to lower right diagnol are the same. So we only need to look at one half (see below) 
+
+#> cov(bengather[,2:4])
+#       l           n          s
+#l  0.17745432  
+#n  0.08747838  3.33792900 
+#s -0.20332280 -0.13859655  0.5026366
 
 # Sphericity assumption
 
-(variance <-  ben[,c("TREAT","BLOCK","final_invert")] %>% # splits out the columns we want
+variance <-  ben[,c("TREAT","BLOCK","final_invert")] %>% # splits out the columns we want
   gather("final_invert","value",-TREAT,-BLOCK) %>% # arranges them in long form
   group_by(BLOCK,TREAT) %>% # selects the groups we are interested in
   summarize(variance=var(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
-  spread("TREAT","variance")) 
+  spread("TREAT","variance")
+
+variance$ln <- variance$l - variance$n
+variance$ls <- variance$l - variance$s
+variance$ns <- variance$n - variance$s
+
+apply(variance[,5:7], 2, var)
+# so this gives us the variances between the treatments (ln is the variance of the l vs the n treatment)
+
+##########################
+## Check for interaction between treatment and block
+##########################
+
+ben[,c("TREAT","BLOCK","final_invert")] %>% 
+gather("final_invert","value",-TREAT,-BLOCK) %>% 
+  ggplot(aes(x = BLOCK, y = value, colour = TREAT, group=TREAT)) +
+  stat_summary(fun.y=mean, geom="point")+
+  stat_summary(fun.y=mean, geom="line")+theme_few()
 
 
-# Use this as the response variable for your ANOVA.  
-
+## Run the actual model
+## we just add the treatment and Blocking covaraites together
 
 model <- aov(final_invert ~ TREAT + BLOCK, data=ben) 
 
@@ -69,44 +94,65 @@ summary(model)
 
 # Was it worthwhile blocking in this case?  How can you tell?
 
-
-
-
 ############################
 ## Repeated Measures
 ############################
 
 
-############
 # Do a repeated measures ANOVA ignoring the blocking factor.  
-############
+# normality? 
+
+bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% gather("BLOCK","value",- TREAT)  # so this is saying to gather everything, except for BLOCK and TREAT
+
+ggplot()+geom_boxplot(data=bengather, aes(x=as.factor(BLOCK), y=value, fill=TREAT))+coord_flip()+theme_few()
+
 
 # Compound Symmetry Assumption
 
-bensub <- ben[,c("TREAT","BLOCK","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] 
+bensub <-  ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out the columns we want
+  gather("BLOCK","value",-TREAT) %>% # arranges them in long form
+  group_by(BLOCK,TREAT) %>% # selects the groups we are interested in
+  summarize(median=median(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
+  spread("TREAT","median") 
 
-cov(bensub[,3:6])
+cov(bensub[,2:4]) # are these numbers similar?
 
 # Sphericity 
 
-(variance <-  ben[,c("TREAT","BLOCK","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out the columns we want
-  gather("final_invert","value",-TREAT,-BLOCK) %>% # arranges them in long form
-  group_by(BLOCK,TREAT) %>% # selects the groups we are interested in
+(variance <-  ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out the columns we want
+  gather("BLOCK","value",-TREAT) %>% # arranges them in long form
+  group_by(TREAT, BLOCK) %>% # selects the groups we are interested in
   summarize(variance=var(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
   spread("TREAT","variance")) 
 
+variance$ln <- variance$l - variance$n
+variance$ls <- variance$l - variance$s
+variance$ns <- variance$n - variance$s
 
-bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% gather("invert","value",- TREAT)  # so this is saying to gather everything, except for BLOCK and TREAT
+apply(variance[,5:7], 2, var) # are these numbers similar? 
 
 
-model <- aov(value ~ TREAT + Error(invert/TREAT) , data=bengather)
+##########################
+## Check for interaction between treatment and block
+##########################
+
+ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out the columns we want
+  gather("BLOCK","value",-TREAT)%>% 
+  ggplot(aes(x = BLOCK, y = value, colour = TREAT, group=TREAT)) +
+  stat_summary(fun.y=mean, geom="point")+
+  stat_summary(fun.y=mean, geom="line")+theme_few()
+
+
+## Run the Repeated Measures Model
+
+bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% gather("BLOCK","value",- TREAT)  # so this is saying to gather everything, except for BLOCK and TREAT
+
+model <- aov(value ~ TREAT + BLOCK, data=bengather)
 summary(model) 
-
 
 
 # Tukey's test for (non)-Additivity 
 
 library(dae) 
 
-
-tukey.1df(model, bengather, error.term="Within")
+tukey.1df(model, ben, error.term="Within")
