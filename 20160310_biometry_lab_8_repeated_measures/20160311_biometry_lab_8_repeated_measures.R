@@ -2,11 +2,14 @@
 # Lab 8
 # Repeated Measures and Randomized Block ANOVA
 
+
 # packages you need
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(ggthemes)
+library(car)
+library(dae) 
 #Use the data in "ben.csv". 
 
 ben <- read.csv('./20160310_biometry_lab_8_repeated_measures/ben.csv')
@@ -88,9 +91,10 @@ gather("final_invert","value",-TREAT,-BLOCK) %>%
 ## Run the actual model
 ## we just add the treatment and Blocking covaraites together
 
-model <- aov(final_invert ~ TREAT + BLOCK, data=ben) 
+model <- aov(final_invert ~ TREAT + as.factor(BLOCK), data=ben) 
 
-summary(model) 
+summary(model)  
+
 
 # Was it worthwhile blocking in this case?  How can you tell?
 
@@ -102,9 +106,9 @@ summary(model)
 # Do a repeated measures ANOVA ignoring the blocking factor.  
 # normality? 
 
-bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% gather("BLOCK","value",- TREAT)  # so this is saying to gather everything, except for BLOCK and TREAT
+bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% gather("BLOCK","value",- TREAT)   # so this is saying to gather everything, except for BLOCK and TREAT
 
-ggplot()+geom_boxplot(data=bengather, aes(x=as.factor(BLOCK), y=value, fill=TREAT))+coord_flip()+theme_few()
+ggplot()+geom_boxplot(data=bengather, aes(x=as.factor(BLOCK), y=value, fill=TREAT))+coord_flip()+theme_few() 
 
 
 # Compound Symmetry Assumption
@@ -123,13 +127,13 @@ cov(bensub[,2:4]) # are these numbers similar?
   gather("BLOCK","value",-TREAT) %>% # arranges them in long form
   group_by(TREAT, BLOCK) %>% # selects the groups we are interested in
   summarize(variance=var(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
-  spread("TREAT","variance")) 
+  spread("TREAT","variance"))  
 
 variance$ln <- variance$l - variance$n
 variance$ls <- variance$l - variance$s
 variance$ns <- variance$n - variance$s
 
-apply(variance[,5:7], 2, var) # are these numbers similar? 
+apply(variance[,5:7], 2, var)  # are these numbers similar? 
 
 
 ##########################
@@ -140,19 +144,24 @@ ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out th
   gather("BLOCK","value",-TREAT)%>% 
   ggplot(aes(x = BLOCK, y = value, colour = TREAT, group=TREAT)) +
   stat_summary(fun.y=mean, geom="point")+
-  stat_summary(fun.y=mean, geom="line")+theme_few()
+  stat_summary(fun.y=mean, geom="line")+theme_few() 
 
 
 ## Run the Repeated Measures Model
 
-bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% gather("BLOCK","value",- TREAT)  # so this is saying to gather everything, except for BLOCK and TREAT
+bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] 
 
-model <- aov(value ~ TREAT + BLOCK, data=bengather)
-summary(model) 
+model <- lm(cbind(INVERTS1, INVERTS2, INVERTS3, INVERTS4) ~ TREAT, data=bengather) # this takes the repeated measure into account, with each of the columns of the response containing one of the repeated measures
+
+mauchly.test(model) # runs the mauchly test
+
+idata <- expand.grid(invert=factor(c(1,2,3,4))) # gives us grid of the repeated measures levels
+
+av.ok <- Anova(model, idata=idata, idesign=~invert ) 
+
+summary(av.ok) # this contains A LOT 
 
 
 # Tukey's test for (non)-Additivity 
 
-library(dae) 
-
-tukey.1df(model, ben, error.term="Within")
+tukey.1df(model, bengather, error.term="Within")
