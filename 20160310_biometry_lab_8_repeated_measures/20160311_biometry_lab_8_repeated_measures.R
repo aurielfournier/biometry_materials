@@ -146,10 +146,11 @@ ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out th
   stat_summary(fun.y=mean, geom="point")+
   stat_summary(fun.y=mean, geom="line")+theme_few() 
 
+###
+## Run the Repeated Measures Model without the BLOCK
+###
 
-## Run the Repeated Measures Model
-
-bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] 
+bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4","BLOCK")] 
 
 model <- lm(cbind(INVERTS1, INVERTS2, INVERTS3, INVERTS4) ~ TREAT, data=bengather) # this takes the repeated measure into account, with each of the columns of the response containing one of the repeated measures
 
@@ -161,7 +162,24 @@ av.ok <- Anova(model, idata=idata, idesign=~invert )
 
 summary(av.ok) # this contains A LOT 
 
+###
+## Run the Repeated Measures Model with the BLOCK
+### 
 
+bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4","BLOCK")] 
+
+model <- lm(cbind(INVERTS1, INVERTS2, INVERTS3, INVERTS4) ~ TREAT + BLOCK, data=bengather) # this takes the repeated measure into account, with each of the columns of the response containing one of the repeated measures
+
+mauchly.test(model) # runs the mauchly test
+
+idata <- expand.grid(invert=factor(c(1,2,3,4))) # gives us grid of the repeated measures levels # gives us grid of the repeated measures levels
+
+av.ok <- Anova(model, idata=idata, idesign=~invert ) 
+
+summary(av.ok) # this contains A LOT 
+
+
+##################
 # Tukey's test for (non)-Additivity 
-
+##################
 tukey.1df(model, bengather, error.term="Within")
