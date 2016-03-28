@@ -39,12 +39,14 @@ ben$final_invert <- ben$INVERTS4 - ben$INVERTS1
 
 # normality? 
 
-ggplot()+geom_boxplot(data=ben, aes(x=as.factor(BLOCK), y=final_invert, fill=TREAT))+coord_flip()+theme_few()
+ben$final_invert_log <- log((ben$final_invert+6))
+
+ggplot()+geom_boxplot(data=ben, aes(x=TREAT, y=final_invert_log, fill=TREAT))+coord_flip()+theme_few()
 
 
 # homogeneity of variance/covariance
 
-bencov <-  ben[,c("TREAT","BLOCK","final_invert")] %>% # splits out the columns we want
+bencov <-  ben[,c("TREAT","BLOCK","final_invert_log")] %>% # splits out the columns we want
   gather("final_invert","value",-TREAT,-BLOCK) %>% # arranges them in long form
   group_by(BLOCK,TREAT) %>% # selects the groups we are interested in
   summarize(median=median(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
@@ -64,8 +66,8 @@ cov(bencov[,2:4])
 
 # Sphericity assumption
 
-variance <-  ben[,c("TREAT","BLOCK","final_invert")] %>% # splits out the columns we want
-  gather("final_invert","value",-TREAT,-BLOCK) %>% # arranges them in long form
+variance <-  ben[,c("TREAT","BLOCK","final_invert_log")] %>% # splits out the columns we want
+  gather("final_invert_log","value",-TREAT,-BLOCK) %>% # arranges them in long form
   group_by(BLOCK,TREAT) %>% # selects the groups we are interested in
   summarize(variance=var(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
   spread("TREAT","variance")
@@ -87,11 +89,18 @@ gather("final_invert","value",-TREAT,-BLOCK) %>%
   stat_summary(fun.y=mean, geom="point")+
   stat_summary(fun.y=mean, geom="line")+theme_few()
 
+new88 <- ben[,c("TREAT","BLOCK","final_invert")] %>% group_by(TREAT, BLOCK) %>% summarise_each(funs(mean, sd, se=sd(.)/sqrt(n())))
+
+ggplot(new88, aes(x=BLOCK, y=mean, colour=TREAT, group=TREAT)) + 
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, color=TREAT, group=TREAT), width=.1) +
+  geom_line() +
+  geom_point( size=3)
+
 
 ## Run the actual model
 ## we just add the treatment and Blocking covaraites together
 
-model <- aov(final_invert ~ TREAT + as.factor(BLOCK), data=ben) 
+model <- aov(final_invert_log ~ TREAT + as.factor(BLOCK), data=ben) 
 
 summary(model)  
 
@@ -108,15 +117,17 @@ summary(model)
 
 bengather <- ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% gather("BLOCK","value",- TREAT)   # so this is saying to gather everything, except for BLOCK and TREAT
 
-ggplot()+geom_boxplot(data=bengather, aes(x=as.factor(BLOCK), y=value, fill=TREAT))+coord_flip()+theme_few() 
+bengather$value_log <- log((bengather$value+1))
+
+ggplot()+geom_boxplot(data=bengather, aes(x=TREAT, y=value_log, fill=TREAT))+coord_flip()+theme_few() 
 
 
 # Compound Symmetry Assumption
 
 bensub <-  ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out the columns we want
-  gather("BLOCK","value",-TREAT) %>% # arranges them in long form
+  gather("BLOCK","value_log",-TREAT) %>% # arranges them in long form
   group_by(BLOCK,TREAT) %>% # selects the groups we are interested in
-  summarize(median=median(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
+  summarize(median=median(value_log)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
   spread("TREAT","median") 
 
 cov(bensub[,2:4]) # are these numbers similar?
@@ -124,9 +135,9 @@ cov(bensub[,2:4]) # are these numbers similar?
 # Sphericity 
 
 (variance <-  ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out the columns we want
-  gather("BLOCK","value",-TREAT) %>% # arranges them in long form
+  gather("BLOCK","value_log",-TREAT) %>% # arranges them in long form
   group_by(TREAT, BLOCK) %>% # selects the groups we are interested in
-  summarize(variance=var(value)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
+  summarize(variance=var(value_log)) %>% # gives us the median value for each combinatino of BLOCK and TREAT 
   spread("TREAT","variance"))  
 
 variance$ln <- variance$l - variance$n
@@ -141,8 +152,8 @@ apply(variance[,5:7], 2, var)  # are these numbers similar?
 ##########################
 
 ben[,c("TREAT","INVERTS1","INVERTS2","INVERTS3","INVERTS4")] %>% # splits out the columns we want
-  gather("BLOCK","value",-TREAT)%>% 
-  ggplot(aes(x = BLOCK, y = value, colour = TREAT, group=TREAT)) +
+  gather("BLOCK","value_log",-TREAT)%>% 
+  ggplot(aes(x = BLOCK, y = value_log, colour = TREAT, group=TREAT)) +
   stat_summary(fun.y=mean, geom="point")+
   stat_summary(fun.y=mean, geom="line")+theme_few() 
 

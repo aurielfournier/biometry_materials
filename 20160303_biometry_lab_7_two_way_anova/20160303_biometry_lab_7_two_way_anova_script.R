@@ -32,10 +32,20 @@ library(ggplot2)
 library(ggthemes)
 
 ggplot(data = q88,
-       aes(x = DENSITY, y = EGGS, colour = SEASON, group=SEASON)) +
+       aes(x = as.factor(DENSITY), y = EGGS, fill = SEASON)) +
+  geom_boxplot()
   stat_summary(fun.y=mean, geom="point")+
-  stat_summary(fun.y=mean, geom="line")+theme_few()
+  stat_summary(fun.y=mean, geom="line")+theme_few()+
+  geom_errorbar()
 
+library(dplyr)
+
+new88 <- q88[,c("DENSITY","SEASON","EGGS")] %>% group_by(DENSITY, SEASON) %>% summarise_each(funs(mean, sd, se=sd(.)/sqrt(n())))
+
+ggplot(new88, aes(x=DENSITY, y=mean, colour=SEASON, group=SEASON)) + 
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, color=SEASON, group=SEASON), width=.1) +
+  geom_line() +
+  geom_point( size=3)
 
 # Use "quin_1_two_way.csv".  Run a two-way ANOVA with DENSITY and SEASON as the predictor variables and EGGS as the response variable.  
 
