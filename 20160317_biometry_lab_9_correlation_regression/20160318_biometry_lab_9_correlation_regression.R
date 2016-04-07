@@ -21,7 +21,7 @@ str(dat)
 #function for correlation
 # cor(x, y = NULL, method = c("pearson", "kendall", "spearman"))
 
-cor(dat$Area, dat$Cover, method="pearson")
+cr <- cor.test(dat$Area, dat$Cover, method="pearson")
 
 # fuction for a regression
 # lm(formula, data)
@@ -51,8 +51,15 @@ ggplot()+
 model <- lm(Area ~ Cover, data=dat)
 summary(model)
 
+## plotting a scatterplot of the poitns
+ggplot()+geom_point(data=dat, aes(x=Cover, y=Area))+theme_few()
+
 ## plotting the regression line
 ggplot()+geom_smooth(data=dat, aes(x=Cover, y=Area), method="lm", color="black")+theme_few()
+
+## plot them together
+
+ggplot()+geom_smooth(data=dat, aes(x=Cover, y=Area), method="lm", color="black")+geom_point(data=dat, aes(x=Cover, y=Area))+theme_few()
 
 
 # examining the residuals
