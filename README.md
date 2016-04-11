@@ -27,5 +27,4 @@ Lab 12 - MANOVA
 
 
 
-
 Lab 13 - Logistic Regression 
