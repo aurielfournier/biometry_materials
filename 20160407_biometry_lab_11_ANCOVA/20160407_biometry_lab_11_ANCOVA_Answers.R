@@ -24,7 +24,9 @@ dat <- read.csv("partridge_ancova.csv")
 
 dat$TREATMEN <- as.factor(dat$TREATMEN)
 
+
 ggplot()+geom_histogram(data=dat, aes(x=LONGEV))+facet_wrap(~TREATMEN)+theme_few()
+
 
 ## homogeneity of variance 
 
