@@ -18,6 +18,9 @@ library(lawstat)
 library(dplyr)
 # this gives us %>% and group_by() and summarise_each() and summarize()
 
+library(Hotelling) 
+# gives us hotelling.test()
+
 library(tidyr)
 # this gives us gather() and spread()
 
