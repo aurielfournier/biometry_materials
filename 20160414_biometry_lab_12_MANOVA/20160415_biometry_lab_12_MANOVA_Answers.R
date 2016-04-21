@@ -5,6 +5,7 @@
 library(ggplot2) # graphing
 library(ggthemes) # theme_few
 library(ggfortify) # autoplot
+library(car) # lets us do contrasts
 
 # responses <- cbind(object$response1, object$response2)
 # manova(responses ~ object$covariate)
@@ -70,25 +71,13 @@ ggplot()+geom_boxplot(data=dat, aes(x=STREAM, y=VELOCITY))+theme_few()
 # think about the experimental design, look for grouping or avoidance in the data
 
 
-
 # Run the MANOVAs and interpret the output.  
 
 # first we bind together the columns (cbind) of our two responses into a new object
 responses <- cbind(dat$VOLUME, dat$VELOCITY)
 
-model <- manova(responses ~ dat$STREAM + dat$SEASON)
+model <- manova(responses ~ STREAM + SEASON,data=dat, contrasts=list(STREAM=contr.sum, SEASON=contr.sum))
 
-summary(model)
-# If there are differences, what groups are different? 
+Model <- Manova(model)
 
-# We can't run a Tukey's on a manova, so we need to run two ANOVAs, one for each response, and run Tukey's on that instead. 
-
-anova1 <- aov(data=dat, VELOCITY ~ STREAM + SEASON)
-
-anova2 <- aov(data=dat, VOLUME ~ STREAM + SEASON)
-
-TukeyHSD(anova1, which="STREAM")
-TukeyHSD(anova1, which="SEASON")
-
-TukeyHSD(anova2, which="STREAM")
-TukeyHSD(anova2, which="SEASON")
+summary(Model, multivariate=TRUE)
