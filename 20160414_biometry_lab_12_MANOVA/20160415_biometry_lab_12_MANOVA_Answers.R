@@ -5,7 +5,6 @@
 library(ggplot2) # graphing
 library(ggthemes) # theme_few
 library(ggfortify) # autoplot
-library(car) # lets us do contrasts
 
 # responses <- cbind(object$response1, object$response2)
 # manova(responses ~ object$covariate)
@@ -70,14 +69,17 @@ ggplot()+geom_boxplot(data=dat, aes(x=STREAM, y=VELOCITY))+theme_few()
 # Independence
 # think about the experimental design, look for grouping or avoidance in the data
 
-
 # Run the MANOVAs and interpret the output.  
 
 # first we bind together the columns (cbind) of our two responses into a new object
 responses <- cbind(dat$VOLUME, dat$VELOCITY)
 
-model <- manova(responses ~ STREAM + SEASON,data=dat, contrasts=list(STREAM=contr.sum, SEASON=contr.sum))
+op <- options(contrasts=c("contr.helmert","contr.poly"))
 
-Model <- Manova(model)
 
-summary(Model, multivariate=TRUE)
+
+model <- manova(responses ~ STREAM + SEASON,data=dat)
+
+linearHypothesis(model, diag(6), c(0,1))
+
+summary(model)
