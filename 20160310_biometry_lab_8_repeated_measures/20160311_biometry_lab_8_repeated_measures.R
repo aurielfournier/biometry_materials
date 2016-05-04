@@ -12,7 +12,7 @@ library(car)
 library(dae) 
 #Use the data in "ben.csv". 
 
-ben <- read.csv('./20160310_biometry_lab_8_repeated_measures/ben.csv')
+ben <- read.csv('~/Biometry_Materials/20160310_biometry_lab_8_repeated_measures/ben.csv')
 summary(ben)
 str(ben)
 head(ben)
