@@ -8,7 +8,7 @@ library(ggfortify)
 
 library(car) 
 # gives us durbin.watson() and Anova()
-
+# gives us logit()
 library(ggthemes)
 # this gives us theme_few()
 

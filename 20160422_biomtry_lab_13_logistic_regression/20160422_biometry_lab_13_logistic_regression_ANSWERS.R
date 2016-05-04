@@ -9,6 +9,10 @@ library(nlme) ## NEW PACKAGE # gives us BIC()
 library(usdm) ## NEW PACKAGE # vif()
 library(MASS)
 
+
+
+
+
 #logistic regression in R
 # glm(response ~ predictor, family=binomial(link='logit'), data=object)
 
@@ -21,6 +25,15 @@ summary(dat)
 
 dat <- dat[!is.na(dat$RIPARIAN_FOREST),] # remove the NA values from Riparian Forest
 
+
+### how to standerdize/scale variables in R
+
+#?scale
+
+summary(dat[,c("SHED_AREA","RIPARIAN_FOREST")])
+dat$scale_shed_area <- scale(dat$SHED_AREA)
+dat$scale_riparian_forest <- scale(dat$RIPARIAN_FOREST)
+summary(dat[,c("scale_shed_area","scale_riparian_forest")])
 
 # The data also includes environmental data that was collected from a GIS database at various spatial scales: watershed, riparian, and local.
 
@@ -102,7 +115,7 @@ BIC(h1, h2, h3)
 
 # After evaluating and comparing each of these hypotheses, please use a stepwise procedure to identify other predictor variables that may be important.  
 
-model <- lm(data=dat, H_SULPHURIA ~ SHED_AREA + SHED_URBAN + RIPARIAN_FOREST) # add some other variables?
+model <-glm(H_SULPHURIA ~ SHED_AREA + SHED_URBAN + RIPARIAN_FOREST, data=dat, family=binomial(link="logit")) # add some other variables?
 
 both <- stepAIC(model, direction="both")
 
