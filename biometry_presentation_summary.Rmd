@@ -1,0 +1,54 @@
+---
+output: html_document
+---
+
+```{r fig.height=15, include=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+
+dat <- read.csv("../Downloads/Biometry Presentations 2016 (Responses) - Form Responses 1.csv")
+
+
+dat <- dat[dat$Presenters.Name %in% car,]
+
+
+quandat <- dat[,c(4,5,6,7,9,10,11,13,14,16,17,18)]
+
+gquandat <- quandat %>% gather("question","score")
+```
+
+```{r setup, fig.height=15}
+car
+
+ggplot()+
+  geom_boxplot(data=gquandat, aes(x=question, y=score))+
+  theme_few()+
+  theme(axis.text.x=element_text(ang=90))
+
+```
+
+# comments on introduction
+
+```{r}
+dat$Additional.Comments
+```
+
+# comments on methods
+
+```{r}
+dat$Additional.Comments.1
+```
+
+# comments on results
+
+```{r}
+dat$Additional.Comments.2
+```
+
+# comments on discussion
+
+```{r}
+dat$Additional.Comments.3
+```
