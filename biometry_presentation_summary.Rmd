@@ -8,15 +8,18 @@ library(tidyr)
 library(ggplot2)
 library(ggthemes)
 
-dat <- read.csv("../Downloads/Biometry Presentations 2016 (Responses) - Form Responses 1.csv")
-
+dat <- read.csv("../../Dropbox/Teaching/2016_Spring_Biometry/Biometry Presentations 2016 (Responses) - Form Responses 1.csv")
 
 dat <- dat[dat$Presenters.Name %in% car,]
-
 
 quandat <- dat[,c(4,5,6,7,9,10,11,13,14,16,17,18)]
 
 gquandat <- quandat %>% gather("question","score")
+
+dat <- dat[dat$Presenters.Name %in% car,4:19]
+
+write.csv(dat, file=paste0("../../Dropbox/Teaching/2016_Spring_Biometry/presentation_data",car,".csv"), row.names = FALSE)
+
 ```
 
 ```{r setup, fig.height=15}
